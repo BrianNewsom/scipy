@@ -1,5 +1,8 @@
 .. image:: https://travis-ci.org/scipy/scipy.png?branch=master
    :target: https://travis-ci.org/scipy/scipy/
+This branch is just a workspace where I can work on improving the effeciency of nquad, among other things.  Thanks.
+
+
 
 =====
 SciPy
