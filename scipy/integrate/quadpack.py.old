@@ -9,7 +9,7 @@ import sys
 import numpy
 from numpy import Inf
 
-__all__ = ['quad', 'dblquad', 'tplquad', 'nquad', 'quad_explain', 'naquad']
+__all__ = ['quad', 'dblquad', 'tplquad', 'nquad', 'quad_explain']
 
 
 error = _quadpack.error
@@ -497,24 +497,6 @@ def tplquad(func, a, b, gfun, hfun, qfun, rfun, args=(), epsabs=1.49e-8,
     """
     return dblquad(_infunc2,a,b,gfun,hfun,(func,qfun,rfun,args),epsabs=epsabs,epsrel=epsrel)
 
-def naquad(func, ranges, args=None, opts=None):
-    """
-    Test function for integration with compiled functions.  Initial outline testing structure of python module
-    """
-
-    depth = len(ranges)
-    ranges = [rng if callable(rng) else _RangeFunc(rng) for rng in ranges]
-    if args is None:
-        args = ()
-    if opts is None:
-        opts = [dict([])] * depth
-
-    if isinstance(opts, dict):
-        opts = [opts] * depth
-    else:
-        opts = [opt if callable(opt) else _OptFunc(opt) for opt in opts]
-
-    return _NAQuad(func, ranges, opts).integrate(*args)
 
 def nquad(func, ranges, args=None, opts=None):
     """
@@ -654,43 +636,9 @@ class _OptFunc(object):
     def __call__(self, *args):
         """Return stored dict."""
         return self.opt
+
+
 class _NQuad(object):
-    def __init__(self, func, ranges, opts):
-        self.abserr = 0
-        self.func = func
-        self.ranges = ranges
-        self.opts = opts
-        self.maxdepth = len(ranges)
-
-    def integrate(self, *args, **kwargs):
-        depth = kwargs.pop('depth', 0)
-        if kwargs:
-            raise ValueError('unexpected kwargs')
-
-        # Get the integration range and options for this depth.                                                                             
-        ind = -(depth + 1)
-        fn_range = self.ranges[ind]
-        low, high = fn_range(*args)
-        fn_opt = self.opts[ind]
-        opt = dict(fn_opt(*args))
-
-        if 'points' in opt:
-            opt['points'] = [x for x in opt['points'] if low <= x <= high]
-        if depth + 1 == self.maxdepth:
-            f = self.func
-        else:
-            f = partial(self.integrate, depth=depth+1)
-
-        value, abserr = quad(f, low, high, args=args, **opt)
-        self.abserr = max(self.abserr, abserr)
-        if depth > 0:
-            return value
-        else:
-            # Final result of n-D integration with error                                                                                    
-            return value, self.abserr
-
-
-class _NAQuad(object):
     def __init__(self, func, ranges, opts):
         self.abserr = 0
         self.func = func
