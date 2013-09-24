@@ -21,7 +21,7 @@ def oneDPython(x):
     return x+2
 
 def twoDPython(x,y):
-    return x**2+y**2+4
+    return x**2+y**2
 
 #source = 
 #ONE D
@@ -34,7 +34,7 @@ print integrate.nquad(comp.onedcompiled, [[-1,1]])
 print ""
 print "X^2 + Y^2 evaluated from x = -200, -0.5, y = -1,1 "
 print "    Two dimensional integral, function in python"
-print integrate.nquad(twoDPython, [[-200, -0.5], [1,-1]])
+print integrate.nquad(twoDPython, [[-200, -0.5], [-1,1]])
 print "    Two dimensional integral, function in fortran"
 print integrate.nquad(comp.twodcompiled, [[-200, -0.5], [-1,1]])
 
