@@ -57,3 +57,15 @@ Real(8) function fourDCompiled(x0,x1,x2,x3)
   return
 
 end function
+
+
+Real(8) function fiveDCompiled(x,y,z,s,t)
+  Real(8) x
+  Real(8) y
+  Real(8) z
+  Real(8) s
+  Real(8) t
+  fiveDCompiled = x*y**z + x*s**t - x*y*z*s*t + 13*s**t
+  return
+end function
+
