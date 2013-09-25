@@ -16,6 +16,14 @@ Real(8) function oneDCompiled(x) !Simple 1 d function compiled to fortran
   return
 end function
 
+Real(8) function oneDOscCompiled(x) !Simple 1 d function compiled to fortran
+  Real(8) x
+!f2py intent(in) x
+!f2py intent(out) oneDCompiled
+  oneDOscCompiled = sin(x)
+  return
+end function
+
 
 Real(8) function twoDCompiled(x,y) !Two dimensional integral 
   Real(8) x
