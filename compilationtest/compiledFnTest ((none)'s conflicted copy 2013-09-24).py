@@ -1,5 +1,5 @@
 import numpy
-
+import cProfile, pstats, StringIO
 import timeit
 
 
@@ -43,10 +43,6 @@ def fourDPython(x0,x1,x2,x3):
 def fiveDPython(x,y,z,s,t):
     return x*y**z + x*s**t - x*y*z*s*t + 13*s**t
 
-def threeDOscPython(x,y,z):
-    return numpy.sin(x) + numpy.sin(y)*numpy.cos(z) + 14*x*y*z
-
-
 def timeTest(fnName, bounds):
     """
     Description:
@@ -65,7 +61,11 @@ def timeTest(fnName, bounds):
     print eval(pyString)
     print "Time: " 
     pyTime = "timeit.timeit('integrate.nquad(" + fnName + "Python," + bounds + ")', 'from __main__ import " + fnName + "Python ; from scipy import integrate', number=1)"#Holds fn to time
-    print eval(pyTime)
+    print eval(pyTime)  
+    print "Solution: "
+    pyString = "integrate.nquad(" + fnName + "Python," + bounds + ")" #Holds fn to evaluate                                                
+    print eval(pyString)
+
 
     print "FORTRAN"
     print "Solution: "
@@ -131,6 +131,3 @@ print timeit.timeit('integrate.nquad(comp.fourdcompiled, [[0,1],[-1,1],[.13,.8],
 print ""
 
 
-timeTest("fiveD", "[[-19,12],[10,11],[-1,4],[0,6],[9,0]]")
-
-timeTest("threeDOsc", "[[-2.5,2.5],[1,6], [0,2]]")
