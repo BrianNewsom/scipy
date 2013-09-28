@@ -4,7 +4,7 @@ print "Testing if compilation of functions in nquad will speed up the execution 
 from timetest import *
 
 
-timeTest('oneD', '[[-1,1]]', "3")
+timeTest("oneD", [[-1,1]], 3)
 timeTest("twoD", "[[-200, -0.5], [-1,1]]")
 
 timeTest("threeD", "[[-19,87],[0,1],[0,3.14]]")

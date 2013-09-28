@@ -1,4 +1,4 @@
-'''
+B'''
 To use this test function simply use
 from timetest import * 
 at the top of your driver file
@@ -36,8 +36,14 @@ def timeTest(fnName, bounds, nIter="1"):
     fnName = Properly cased (for Python) name of function previously declared to be timed
     bounds = bounds of integration, in order of fn arguments.  Ex: [[a,b],[c,d],[e,f]]
     nIter = number of times test will be run on each method.  Must be a positive integer.  The time output will be the sum of all those times. (This may change). 
-    """
+    Sample call:
+    import timetest
+    timeTest("threeD", [[-19,87],[0,1],[0,3.14]], 10)      
 
+    """
+    #Convert to strings to manipulate more easily
+    bounds = str(bounds)
+    nIter = str(nIter) 
 
     print "~~~~~~~~~~~~~~~~~~~~~~~~~~integrate " + fnName + " from " + bounds + " run " + nIter + " time(s)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
