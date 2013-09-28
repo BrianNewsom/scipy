@@ -31,7 +31,7 @@ except:
 def timeTest(fnName, bounds, nIter="1"):
     """
     Description:
-    Prints out solutions as determined by python and fortran compiled method, then prints out the time each took to execute fully.  At this point it runs the function twice to time and get the solution but that may change over time
+    Prints out solutions as determined by python and fortran compiled method, then prints out the time each took to execute fully. 
     Inputs:
     fnName = Properly cased (for Python) name of function previously declared to be timed
     bounds = bounds of integration, in order of fn arguments.  Ex: [[a,b],[c,d],[e,f]]
