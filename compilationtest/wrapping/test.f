@@ -1,0 +1,36 @@
+      FUNCTION INTEGRAND (X)
+      IMPLICIT NONE
+      REAL X
+      REAL INTEGRAND
+      INTEGRAND = X**2 + 4.*X - 12.
+      END FUNCTION INTEGRAND
+      
+      FUNCTION INTEGRAL (X1,X2)
+      IMPLICIT NONE
+      REAL X1, X2
+      REAL INTEGRAL
+      INTEGRAL = X2**3/3. + 2.*X2**2 - 12.*X2 -
+     &          (X1**3/3. + 2.*X1**2 - 12.*X1)
+      END FUNCTION
+
+c      PROGRAM TEST
+c      IMPLICIT NONE
+c      REAL A, B, EPSABS, EPSREL, RESULT, ABSERR
+c      INTEGER KEY, NEVAL, IER, LIMIT, LENW, LAST
+c      PARAMETER (LIMIT = 50, LENW = 200)
+c      INTEGER IWORK(LIMIT)
+c      REAL WORK(LENW)
+c      EXTERNAL QAG, INTEGRAND, INTEGRAL
+c      REAL INTEGRAL
+c      A = -1.
+c      B = 1.
+c      EPSABS = 1E-3
+c      EPSREL = 1E-3
+c      KEY = 1
+c      CALL QAG(INTEGRAND,A,B,EPSABS,EPSREL,KEY,
+c     &     RESULT, ABSERR, NEVAL, IER, LIMIT, LENW, LAST, IWORK, WORK)
+c      PRINT *, 'Answers: '
+c      PRINT *, RESULT, ABSERR, NEVAL, IER
+c      PRINT *, 'Test against analytic function'
+c      PRINT *, INTEGRAL(A,B)
+c      END PROGRAM TEST

@@ -51,12 +51,16 @@ def timeTest(fnName, bounds, nIter="1"):
     #CTYPES IMPORTS (should these be outside function?
     comp = ctypes.CDLL('/home/brian/Dropbox/Research/myscipy/scipy/compilationtest/ctypes/testlib.so')
     restype = ctypes.c_double
-    argtypes = (ctypes.c_double,) #Change this to array of c_doubles of size dimension
-    for name in [fnName]: #Names of functions to parse
-        func = getattr(comp, name)
-        func.restype = restype
-        func.argtypes = argtypes
-    
+    argtypes = (ctypes.c_double,ctypes.c_double,) #Change this to list of c_doubles of size dimension
+#    for name in [fnName]: #Names of functions to parse
+#        func = getattr(comp, name)
+#        func.restype = restype
+#        func.argtypes = argtypes
+    comp.twoD.argtypes = argtypes
+    comp.twoD.restype = restype
+    comp.twoD(ctypes.c_double(1),ctypes.c_double(3))
+    #import pdb; pdb.set_trace()
+
     bounds = str(bounds) #convert to string to manipulate
     nIter = str(nIter)
     print "~~~~~~~~~~~~~~~~~~~~~~~~~~integrate " + fnName + " from " + bounds + " run " + nIter + " time(s)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -121,3 +125,5 @@ def timeTest(fnName, bounds, nIter="1"):
 
 
 
+if __name__ == "__main__":
+    timeTest("twoD","[[-2,2],[-1,1]]")

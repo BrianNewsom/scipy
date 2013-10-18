@@ -1,4 +1,4 @@
-B'''
+'''
 To use this test function simply use
 from timetest import * 
 at the top of your driver file

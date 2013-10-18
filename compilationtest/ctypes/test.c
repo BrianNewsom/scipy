@@ -1,8 +1,8 @@
 
 #include <stdio.h>
 
-double oneD(double* x);
-double twoD(double* x, double* y);
+double oneD(double x);
+double twoD(double x, double y);
 
 
 int main(){
@@ -12,10 +12,10 @@ int main(){
   return 6;
 }
 
-double oneD(double* x){
-  return *x+2.0;
+double oneD(double x){
+  return x+2.0;
 }
 
-double twoD(double* x, double* y){
-  return (*x)*(*x) + (*y)*(*y);
+double twoD(double x, double y){
+  return x*x + y*y;
 }
