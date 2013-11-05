@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double* globargs;
+void* globf;
+int globnargs;
+//double (*globf)(double * );
+
+void init(void* func, double args[], int nargs){
+	//Initialize everything necessary
+	globf = func;
+	globnargs = nargs;
+	globargs = args;
+
+}
+
+double f1base(double *x0){ //ex function to test w/
+	return *x0+2;
+}
+
+double f2base(double *x0, double *x1){
+	return *x0 + 4 + *x1; //Is this safe? Will x2 always be 0 when called as below?
+}
+
+double f3base(double *x0, double *x1){
+	return *x0 + 6 + *x1;
+}
+
+double f4base(double *x0, double *x1, double *x2){
+	return *x0 + 6 + *x1 + 3 * *x2;
+
+}
+
+double f6base(double *x0, double *x1, double *x2, double *x3, double *x4, double *x5){
+	return *x0 + 6 + *x1 * *x2 * *x3 * *x4 * *x5;
+}
+
+double g1base(double* args){ //Alternate declaration style
+	return args[0]*4;
+
+}
+
+double g2base(double* args){ //Alt
+	return args[0]*4 + 7 + args[1];
+}
+
+double quad_functionNOARGS(double* x){ //quad_function analogue (Makes it callable as with only *x)
+	//This must set up all the args globally as well 
+
+	double (*foo)(double * ) = globf; // This has to take args, etc.
+
+	return foo(x);
+
+}
+
+double quad_function(double* x){ //quad_function analogue (Makes it callable as with only *x)
+	//This must set up all the args globally as well 
+	switch (globnargs)
+	{
+		case 1: 
+		{
+			double (*foo1) (double * ) = globf;
+			return foo1(x);
+		}
+		case 2: 
+		{
+			double (*foo2) (double *, double * ) = globf;
+			return foo2(x, &globargs[1]);
+		}
+		case 3:
+		{
+			double (*foo3) (double *, double *, double *) = globf;
+			return foo3(x, &globargs[1], &globargs[2]);
+		}
+		case 4:
+		{
+			double (*foo4) (double *, double *, double *, double *) = globf;
+			return foo4(x, &globargs[1], &globargs[2], &globargs[3]);
+		}
+		case 5:
+		{
+			double (*foo5) (double *, double *, double *, double *, double *) = globf;
+			return foo5(x, &globargs[1], &globargs[2], &globargs[3], &globargs[4]);
+		}
+		case 6:
+		{
+			double (*foo6) (double *, double *, double *, double *, double *, double *) = globf;
+			return foo6(x, &globargs[1], &globargs[2], &globargs[3], &globargs[4], &globargs[5]);
+		}
+		case 7:
+		{
+			double (*foo7) (double *, double *, double *, double *, double *, double *, double *) = globf;
+			return foo7(x, &globargs[1], &globargs[2], &globargs[3], &globargs[4], &globargs[5], &globargs[6]);
+		}
+		case 8:
+		{
+			double (*foo8) (double *, double *, double *, double *, double *, double *, double *, double *) = globf;
+			return foo8(x, &globargs[1], &globargs[2], &globargs[3], &globargs[4], &globargs[5], &globargs[6], &globargs[7]);
+		}
+		default:
+			return -999999;
+	}
+}
+
+double quad_function_alt(double *x){ // Gets rid of need for switch statement. User must define function as in g1 or g2
+	double (*foo)(double* args) = globf;
+	double* args = globargs;
+	args[0] = *x;
+	return foo(args);
+}
+
+double dqag(){ //Evaluate Dqags
+	//Currently don't allow checking integration bounds (oops)
+	double a, b, epsabs, epsrel, result, abserr;
+  	int key, neval, ier, last;
+  	int limit = 50;
+  	int lenw = 200;
+  	int iwork[50];
+  	double work[200];
+  
+  	a = -1.;
+  	b = 1.;
+  	epsabs = 1e-3;
+  	epsrel = 1e-3;
+  	key = 1;
+
+	dqag_(quad_function,&a,&b,&epsabs,&epsrel,&key,&result,&abserr,&neval,&ier,&limit,&lenw,&last,&iwork,&work);
+	printf("\n");
+	printf("%f\n",result);
+	printf("\n");
+}
+
+double dqagalt(){ //Evaluate Dqags
+	//Currently don't allow checking integration bounds (oops)
+	double a, b, epsabs, epsrel, result, abserr;
+  	int key, neval, ier, last;
+  	int limit = 50;
+  	int lenw = 200;
+  	int iwork[50];
+  	double work[200];
+  
+  	a = -1.;
+  	b = 1.;
+  	epsabs = 1e-3;
+  	epsrel = 1e-3;
+  	key = 1;
+
+	dqag_(quad_function_alt,&a,&b,&epsabs,&epsrel,&key,&result,&abserr,&neval,&ier,&limit,&lenw,&last,&iwork,&work);
+	printf("\n");
+	printf("%f\n",result);
+	printf("\n");
+}
+
+int main(){
+	void* f1 = f1base;
+	void* f2 = f2base;
+	void* f3 = f3base;
+	void* f4 = f4base;
+	void* f6 = f6base;
+
+	void* g1 = g1base;
+	void* g2 = g2base;
+	//Initial method
+	printf("First method integrating f6 from -1 to 1");
+	int nargs = 6; //Number of arguments 1->n
+	double args[nargs-1];
+	args[1] = 0; //Const values we want to hold x1 .... xn to
+	args[2] = 0; 
+	args[3] = 0;
+	args[4] = 0;
+	args[5] = 0;
+	init(f6, args, nargs);
+	dqag();
+
+
+	//Alternate method
+	printf("Alternate method integrating g2 from -1 to 1");
+	int nargs2 = 2;
+	double args2[nargs2-1];
+	args2[1] = 12;
+	init(g2,args2,nargs2);
+	dqagalt();
+	return 0;
+}
+
