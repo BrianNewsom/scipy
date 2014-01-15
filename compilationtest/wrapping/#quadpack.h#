@@ -53,7 +53,8 @@ void function::eval(){
 
 
 void* function::arrayEval( float(*fnArray)(float xes[], int *nx, float ts[], int *nt)){
-  
+  if (*nx == 1){
+    return 
   return NULL;
 
 

@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-double* globargs;
-void* globf;
-int globnargs;
-//double (*globf)(double * );
+double* globargs; //Array to store global parameters (x1,...,xn)
+void* globf; //Void pointer that will hold function to be later typed
+int globnargs; //Int to store number of elements in globargs.  (Only used if we use quad_function rather than alt)
 
 void init(void* func, double args[], int nargs){
 	//Initialize everything necessary
@@ -16,26 +13,25 @@ void init(void* func, double args[], int nargs){
 
 }
 
-double f4base(double *x0, double *x1, double *x2){
+double f1base(double *x0, double *x1, double *x2){
 	return *x0 + 6 + *x1 + 3 * *x2;
 
 }
 
-double f6base(double *x0, double *x1, double *x2, double *x3, double *x4, double *x5){
+double f2base(double *x0, double *x1, double *x2, double *x3, double *x4, double *x5){
 	return *x0 + 6 + *x1 * *x2 * *x3 * *x4 * *x5;
 }
 
-double g2base(double args[2]){ //Alt
+double g1base(double args[2]){ //User presents variables as an array
 	return args[0]*4 + 7 + args[1];
 }
 
-double g3base(double args[3]){
+double g2base(double args[3]){
 	return 7*args[0] * args[1] * args[2];
 
 }
 
-double quad_function(double* x){ //quad_function analogue (Makes it callable as with only *x)
-	//This must set up all the args globally as well 
+double quad_function(double* x){ //quad_function analogue (Makes it callable as with only *x) 
 	switch (globnargs)
 	{
 		case 1: 
@@ -46,7 +42,6 @@ double quad_function(double* x){ //quad_function analogue (Makes it callable as 
 		case 2: 
 		{
 			double (*foo2) (double *, double * ) = globf;
-			//double (*foo2) = globf;
 			return foo2(x, &globargs[1]);
 		}
 		case 3:
@@ -92,16 +87,7 @@ double quad_function_alt(double* x){ // Gets rid of need for switch statement. U
 	return foo(args);
 }
 
-// //WRITE QUAD_FUNCTION_VARIADIC
-// double quad_function_variadic(double *x){
-// 	double (*varfunc)(double* x , ...) = globf;
-// 	// va_list ap;
-// 	// va_start(ap, x);
-// 	return 0;
-// }
-
 double dqag(double a, double b){ //Evaluate Dqags
-	//Currently don't allow choosing integration bounds or anything of the like
 	double epsabs, epsrel, result, abserr;
   	int key, neval, ier, last;
   	int limit = 50;
@@ -121,7 +107,6 @@ double dqag(double a, double b){ //Evaluate Dqags
 }
 
 double dqagalt(double a, double b){ //Evaluate Dqags
-	//Currently don't allow choosing integration bounds or anything of the like
 	double epsabs, epsrel, result, abserr;
   	int key, neval, ier, last;
   	int limit = 50;
@@ -141,8 +126,8 @@ double dqagalt(double a, double b){ //Evaluate Dqags
 }
 
 void test1(){ //Simple test of switch method. Holding all args to 0.
-	printf("First method integrating f6 from -1 to 1");
-	void* f6 = f6base;
+	printf("First method integrating f2 from -1 to 1");
+	void* f2 = f2base;
 	int nargs = 6; //Number of arguments 1->n
 	double expectedresult = 12;//Integrated symbollically in Mathematica
 	double args[nargs];
@@ -151,7 +136,7 @@ void test1(){ //Simple test of switch method. Holding all args to 0.
 	args[3] = 0;
 	args[4] = 0;
 	args[5] = 0;
-	init(f6, args, nargs);
+	init(f2, args, nargs);
 	dqag(-1,1);
 	printf("Expected result: ");
 	printf("%f\n",expectedresult);
@@ -159,13 +144,13 @@ void test1(){ //Simple test of switch method. Holding all args to 0.
 }
 
 void test2(){ //Simple test of array function input. Holding other args to 0.
-	printf("Alternate method integrating g2 from -1 to 100");
-	void* g2 = g2base;
+	printf("Alternate method integrating g1 from -1 to 100");
+	void* g1 = g1base;
 	int nargs2 = 2;
 	double expectedresult = 20705;//Integrated symbollically in Mathematica
 	double args2[nargs2];
 	args2[1] = 0;
-	init(g2,args2,nargs2);
+	init(g1,args2,nargs2);
 
 	dqagalt(-1,100);
 	printf("Expected result: ");
@@ -175,14 +160,14 @@ void test2(){ //Simple test of array function input. Holding other args to 0.
 
 void test3(){//Now test functionality of args passing (required for multidimension integration) 
 	//	return *x0 + 6 + *x1 + 3 * *x2;
-	printf("First method integrating f4 from -1000 to .00005, holding args[1] to 7 and args[2] to 8");
-	void* f4 = f4base;
+	printf("First method integrating f1 from -1000 to .00005, holding args[1] to 7 and args[2] to 8");
+	void* f1 = f1base;
 	int nargs = 3; //Number of arguments 1->n
 	double expectedresult = -463000;//Integrated symbollically in Mathematica
 	double args[nargs];
 	args[1] = 7; //Const values we want to hold x1 .... xn to
 	args[2] = 8; 
-	init(f4, args, nargs);
+	init(f1, args, nargs);
 	dqag(-1000,0.00005);
 	printf("Expected result: ~");
 	printf("%f\n",expectedresult);
@@ -190,14 +175,14 @@ void test3(){//Now test functionality of args passing (required for multidimensi
 
 void test4(){//Now test functionality of args passing (required for multidimension integration) 
 	//return 7*args[0] * args[1] * args[2];
-	printf("Alternate method integrating g3 from 0 to 19, holding args[1] to 2 and args[2] to 1");
-	void* g3 = g3base;
+	printf("Alternate method integrating g2 from 0 to 19, holding args[1] to 2 and args[2] to 1");
+	void* g2 = g2base;
 	int nargs = 3; //Number of arguments 1->n
 	double expectedresult = 2527;//Integrated symbollically in Mathematica
 	double args[nargs];
 	args[1] = 2; //Const values we want to hold x1 .... xn to
 	args[2] = 1; 
-	init(g3, args, nargs);
+	init(g2, args, nargs);
 	dqagalt(0,19);
 	printf("Expected result: ");
 	printf("%f\n",expectedresult);
@@ -209,6 +194,7 @@ int main(){
 	test2();
 	test3();
 	test4();
+	quadpack_ctypes_function(12);
 	return 0;
 }
 
