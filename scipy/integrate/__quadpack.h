@@ -279,8 +279,8 @@ static PyObject *quadpack_qagse(PyObject *dummy, PyObject *args) {
   elist = (double *)ap_elist->data;
 
   if (func_type == Callable) {
-    if (quad_init_func(&storevar, fcn, extra_args) == NPY_FAIL)
-      goto fail;
+    // if (quad_init_func(&storevar, fcn, extra_args) == NPY_FAIL)
+    //   goto fail;
 
     if (setjmp(quadpack_jmpbuf)) {
       quad_restore_func(&storevar, NULL);
@@ -288,7 +288,7 @@ static PyObject *quadpack_qagse(PyObject *dummy, PyObject *args) {
     }
     else {
       funcwrapper_init(quad_function);
-      dqagse2(funcwrapper, 0, NULL, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, 
+      dqagse2(funcwrapper, 0, quadpack_extra_arguments, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, 
             blist, rlist, elist, iord, &last);
     // DQAGSE(quad_function, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, 
     //        blist, rlist, elist, iord, &last);
