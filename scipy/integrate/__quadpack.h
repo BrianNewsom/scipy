@@ -279,8 +279,9 @@ static PyObject *quadpack_qagse(PyObject *dummy, PyObject *args) {
   elist = (double *)ap_elist->data;
 
   if (func_type == Callable) {
-    // if (quad_init_func(&storevar, fcn, extra_args) == NPY_FAIL)
-    //   goto fail;
+
+    if (quad_init_func(&storevar, fcn, extra_args) == NPY_FAIL)
+      goto fail;
 
     if (setjmp(quadpack_jmpbuf)) {
       quad_restore_func(&storevar, NULL);
