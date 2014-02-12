@@ -280,8 +280,7 @@ static PyObject *quadpack_qagse(PyObject *dummy, PyObject *args) {
     else {
       funcwrapper_init(&ystorevar, quad_function);
       init_c_multivariate(&zstorevar, funcwrapper, 0, NULL);
-      DQAGSE(call_c_multivariate, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, 
-           blist, rlist, elist, iord, &last);
+      DQAGSE(call_c_multivariate, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, blist, rlist, elist, iord, &last);
     }
 
     quad_restore_func(&storevar, &ier);
@@ -295,10 +294,7 @@ static PyObject *quadpack_qagse(PyObject *dummy, PyObject *args) {
       goto fail;
     funcwrapper_init(&ystorevar, quad_function2);
     init_c_multivariate(&zstorevar, funcwrapper, 0, NULL);
-    // dqagse2(funcwrapper, 0, NULL, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist,
-    //        blist, rlist, elist, iord, &last);
-    DQAGSE(call_c_multivariate, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist,
-           blist, rlist, elist, iord, &last);
+    DQAGSE(call_c_multivariate, &a, &b, &epsabs, &epsrel, &limit, &result, &abserr, &neval, &ier, alist, blist, rlist, elist, iord, &last);
     restore_ctypes_func(&storevar);
     restore_c_multivariate(&zstorevar);
     funcwrapper_restore(&ystorevar);
