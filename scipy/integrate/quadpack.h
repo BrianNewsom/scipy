@@ -169,6 +169,35 @@ int init_c_multivariate(ZStorage* store, double (*f)(int, double *), int n, doub
   globalargs = store->z_args1;
   return NPY_SUCCEED;
 }
+//Gets fn pointer from python instead of from c
+int init_c_multivariate2(ZStorage* store, PyObject* f, int n, double args[n]){
+  /*Initialize function of n+1 variables
+  Input: 
+    f - Function pointer to function to evaluate
+    n - integer number of extra parameters 
+    args - double array of length n with parameters x[1]....x[n]
+  Output:
+    NPY_FAIL on failure 
+    NPY_SUCCEED on success
+  */
+
+  //Store current parameters
+  store->z_f0 = globalf;      
+  store->z_nargs0 = globalnargs;
+  store->z_args0 = globalargs;
+
+  //Store new parameters
+  store->z_f1 = get_ctypes_function_pointer(f);   
+  store->z_nargs1 = n;
+  store->z_args1 = args;
+  if (store->z_f1 == NULL) return NPY_FAIL;
+  
+  //Set globals
+  globalf = store->z_f1;
+  globalnargs = store->z_nargs1;
+  globalargs = store->z_args1;
+  return NPY_SUCCEED;
+}
 
 double call_c_multivariate(double* x){ 
   /*Evaluates user defined function as function of one variable. 
@@ -224,3 +253,23 @@ void funcwrapper_restore(YStorage* store){
     //Restores function after use
     globalbasef = store->y_func0;
 }
+
+double* c_array_from_tuple(PyObject* tuple){
+    /* Accepts Python tuple and converts to double array in c */
+    if(!PyTuple_CheckExact(tuple)){ //Check if tuple is a python tuple
+        printf("FAIL\n");
+        return NULL;
+    }
+    Py_ssize_t nargs = PyTuple_Size(tuple);
+    Py_ssize_t i = 0; //Maybe 1
+    double* array = (double *) malloc(sizeof(double)*nargs);
+    for (i = 0; i < nargs; i++) {
+      /* convert tuple to array */
+      PyObject* item = PyTuple_GetItem(tuple, i); //Get ith item of tuple;
+      array[i] = PyFloat_AsDouble(item);
+      //Py_DECREF(item); FIX: Don't I need to decref here? It segfaults
+   }
+
+   return array;
+}
+
